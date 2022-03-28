@@ -7,19 +7,19 @@ import (
 	"os"
 )
 
+//user and password for the database
+var users = [...]string{"A", "B", "C"}
+var passwords = [...]string{"A", "B", "C"}
+var x = 3
+
+//this is a query for couchbase
+//var query = "INSERT INTO ecom-pro.auth.authentication (KEY, VALUE) VALUES "
+
 func main() {
-	//change the user and pass for your use
-	users := [...]string{"", "", "", "", "", ""}
-	passwords := [...]string{"", "", "", "", "", ""}
-	x := 6 // put here the length of users and passwords (are the same)
+	//queryF := generateQuerysCouchbase(query)
 
-	//this is a query for couchbase
-	//query := "INSERT INTO ecom-pro.auth.authentication (KEY, VALUE) VALUES "
-
-	//query = generateQuerysCouchbase(users, passwords, x, query)
-
-	json := generateJson(users, passwords, x)
-	sql := generateSql(users, x)
+	json := generateJson()
+	sql := generateSql()
 
 	generateJsonFile(json)
 	generateSqlFile(sql)
@@ -58,7 +58,7 @@ func generateSqlFile(sql string) {
 
 //this method generate sql query
 //the length of array is the value of x
-func generateSql(users [6]string, x int) string {
+func generateSql() string {
 	query := "INSERT INTO shipping.DRIVER_GEOLOCATION (DRIVER_ID, LATITUDE, LONGITUDE) \nVALUES "
 
 	for i := 0; i < x; i++ {
@@ -119,16 +119,14 @@ func formatUserAndPassword(user, password string) (userF string, passF string) {
 
 //this method generate json text
 //the length of arrays is the value of x
-func generateJson(users [6]string, passwords [6]string, x int) string {
+func generateJson() string {
 	json := "[\n"
 
 	for i := 0; i < x; i++ {
 		ps := encodePassword(passwords[i])
 
-		var user string
-		var pass string
+		user, pass := formatUserAndPassword(users[i], ps)
 
-		user, pass = formatUserAndPassword(users[i], ps)
 		value := "\t{\n\t\t\"username\"" + " : " + user + " ,\n\t\t\"password\" : " + pass + "\n\t}"
 
 		if i != x-1 {
@@ -144,16 +142,14 @@ func generateJson(users [6]string, passwords [6]string, x int) string {
 
 //normaly don't use this
 //the length of arrays is the value of x
-func generateQuerysCouchbase(users [6]string, passwords [6]string, x int, query string) string {
+func generateQuerysCouchbase(query string) string {
 	querys := ""
 
 	for i := 0; i < x; i++ {
 		ps := encodePassword(passwords[i])
 
-		var user string
-		var pass string
+		user, pass := formatUserAndPassword(users[i], ps)
 
-		user, pass = formatUserAndPassword(users[i], ps)
 		value := "(" + users[i] + ",{\"username\"" + " : " + user + " , \"password\" : " + pass
 
 		//fmt.Println(value)

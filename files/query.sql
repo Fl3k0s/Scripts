@@ -1,7 +1,4 @@
 INSERT INTO shipping.DRIVER_GEOLOCATION (DRIVER_ID, LATITUDE, LONGITUDE) 
-VALUES ('', 0.0, 0.0),
-('', 0.0, 0.0),
-('', 0.0, 0.0),
-('', 0.0, 0.0),
-('', 0.0, 0.0),
-('', 0.0, 0.0);
+VALUES ('A', 0.0, 0.0),
+('B', 0.0, 0.0),
+('C', 0.0, 0.0);
