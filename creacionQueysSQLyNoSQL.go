@@ -10,14 +10,15 @@ import (
 //user and password for the database
 var users = [...]string{"A", "B", "C"}
 var passwords = [...]string{"A", "B", "C"}
-var x = 3
+var x int
 
 //this is a query for couchbase
-//var query = "INSERT INTO ecom-pro.auth.authentication (KEY, VALUE) VALUES "
+var query = "INSERT INTO ecom-pro.auth.authentication (KEY, VALUE) VALUES "
 
 func main() {
 	//queryF := generateQuerysCouchbase(query)
 
+	x = len(users)
 	json := generateJson()
 	sql := generateSql()
 
@@ -142,7 +143,7 @@ func generateJson() string {
 
 //normaly don't use this
 //the length of arrays is the value of x
-func generateQuerysCouchbase(query string) string {
+func generateQuerysCouchbase() string {
 	querys := ""
 
 	for i := 0; i < x; i++ {
