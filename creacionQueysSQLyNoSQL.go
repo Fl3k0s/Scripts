@@ -5,33 +5,65 @@ import (
 	"encoding/hex"
 	"fmt"
 	"os"
+	"strings"
+	"time"
 )
 
 //user and password for the database
 var users = [...]string{"A", "B", "C"}
 var passwords = [...]string{"A", "B", "C"}
 var x int
+var date = exportDate()
 
 //this is a query for couchbase
 var query = "INSERT INTO ecom-pro.auth.authentication (KEY, VALUE) VALUES "
 
 func main() {
-	//queryF := generateQuerysCouchbase(query)
-
 	x = len(users)
+
+	//queryF := generateQuerysCouchbase(query)
 	json := generateJson()
 	sql := generateSql()
+	splitDate()
 
-	generateJsonFile(json)
-	generateSqlFile(sql)
+	sqlFileName := "./files/inesertQuery-" + date + ".sql"
+	jsonFileName := "./files/usersCouchbase-" + date + ".json"
+
+	generateFile(json, jsonFileName)
+	generateFile(sql, sqlFileName)
 
 	fmt.Println(json)
 	fmt.Println(sql)
 }
 
+//split text in lines
+func splitDate() {
+	var lines []string
+	var textSplit string
+	for _, line := range strings.Split(date, "-") {
+		line = strings.TrimSpace(line)
+
+		if line != "" {
+			lines = append(lines, line)
+		}
+
+		textSplit = textSplit + line
+	}
+
+	date = textSplit
+	fmt.Println(date)
+	fmt.Println(textSplit)
+}
+
+//time.Time to string
+func exportDate() string {
+	t := time.Now()
+	return t.Format("2006-01-02")
+}
+
 //generate a sql file, import the sql text
-func generateSqlFile(sql string) {
-	f, err := os.Create("./files/query.sql")
+func generateFile(text string, fileName string) {
+	f, err := os.Create(fileName)
 
 	if err != nil {
 		fmt.Println(err)
@@ -39,7 +71,7 @@ func generateSqlFile(sql string) {
 
 	}
 
-	l, err := f.WriteString(sql)
+	l, err := f.WriteString(text)
 
 	if err != nil {
 		fmt.Println(err)
@@ -75,33 +107,6 @@ func generateSql() string {
 	query = query + ";"
 
 	return query
-}
-
-//generate a json file
-func generateJsonFile(json string) {
-	f, err := os.Create("./files/users.json")
-
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	l, err := f.WriteString(json)
-
-	if err != nil {
-		fmt.Println(err)
-		f.Close()
-		return
-	}
-
-	fmt.Println(l, "bytes written successfully")
-
-	err = f.Close()
-
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
 }
 
 //encode the password
