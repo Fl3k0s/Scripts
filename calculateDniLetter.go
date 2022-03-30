@@ -12,6 +12,5 @@ func main() {
 //calculateDniLetter returns the letter of the dni
 func calculateDniLetter() string {
 	var letters = []string{"T", "R", "W", "A", "G", "M", "Y", "F", "P", "D", "X", "B", "N", "J", "Z", "S", "Q", "V", "H", "L", "C", "K", "E"}
-	numberOfLetter := dni % 23
-	return letters[numberOfLetter]
+	return letters[dni % 23]
 }
