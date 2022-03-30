@@ -22,15 +22,15 @@ func main() {
 	x = len(users)
 
 	//queryF := generateQuerysCouchbase(query)
-	json := generateJson()
-	sql := generateSql()
+	json := _generateJson()
+	sql := _generateSql()
 	splitDate()
 
 	sqlFileName := "./files/inesertQuery-" + date + ".sql"
 	jsonFileName := "./files/usersCouchbase-" + date + ".json"
 
-	generateFile(json, jsonFileName)
-	generateFile(sql, sqlFileName)
+	_generateFile(json, jsonFileName)
+	_generateFile(sql, sqlFileName)
 
 	fmt.Println(json)
 	fmt.Println(sql)
@@ -62,7 +62,7 @@ func exportDate() string {
 }
 
 //generate a sql file, import the sql text
-func generateFile(text string, fileName string) {
+func _generateFile(text string, fileName string) {
 	f, err := os.Create(fileName)
 
 	if err != nil {
@@ -91,7 +91,7 @@ func generateFile(text string, fileName string) {
 
 //this method generate sql query
 //the length of array is the value of x
-func generateSql() string {
+func _generateSql() string {
 	query := "INSERT INTO shipping.DRIVER_GEOLOCATION (DRIVER_ID, LATITUDE, LONGITUDE) \nVALUES "
 
 	for i := 0; i < x; i++ {
@@ -110,14 +110,14 @@ func generateSql() string {
 }
 
 //encode the password
-func encodePassword(password string) string {
+func _encodePassword(password string) string {
 	encrypted := sha256.Sum256([]byte(password))
 	ps := hex.EncodeToString(encrypted[:])
 	return ps
 }
 
 //this method format the user and password for the json text
-func formatUserAndPassword(user, password string) (userF string, passF string) {
+func _formatUserAndPassword(user, password string) (userF string, passF string) {
 	userF = "\"" + user + "\""
 	passF = "\"" + password + "\""
 	return
@@ -125,13 +125,13 @@ func formatUserAndPassword(user, password string) (userF string, passF string) {
 
 //this method generate json text
 //the length of arrays is the value of x
-func generateJson() string {
+func _generateJson() string {
 	json := "[\n"
 
 	for i := 0; i < x; i++ {
-		ps := encodePassword(passwords[i])
+		ps := _encodePassword(passwords[i])
 
-		user, pass := formatUserAndPassword(users[i], ps)
+		user, pass := _formatUserAndPassword(users[i], ps)
 
 		value := "\t{\n\t\t\"username\"" + " : " + user + " ,\n\t\t\"password\" : " + pass + "\n\t}"
 
@@ -152,9 +152,9 @@ func generateQuerysCouchbase() string {
 	querys := ""
 
 	for i := 0; i < x; i++ {
-		ps := encodePassword(passwords[i])
+		ps := _encodePassword(passwords[i])
 
-		user, pass := formatUserAndPassword(users[i], ps)
+		user, pass := _formatUserAndPassword(users[i], ps)
 
 		value := "(" + users[i] + ",{\"username\"" + " : " + user + " , \"password\" : " + pass
 
