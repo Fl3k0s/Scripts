@@ -10,10 +10,10 @@ import (
 	"time"
 )
 
-var allDnis = []string{"48204767X", "02321331X", "Y7031439P"}
+var allDnis = []string{"Y8023501B", "X4431477K", "04216889T"}
 var allUsers []string
 var allPasswords []string
-var allNames = []string{"jorge eduardo vasquez ramirez", "juan pablo ramirez", "juan pablo ramirez2"}
+var allNames = []string{"Wilmer Salcedo Muñoz", "Jhonatan Veneros Collantes", "Javier Sanchez CARROZADO"}
 
 var toDate = exportToDate()
 
@@ -94,9 +94,9 @@ func convertAllDnisToUsers() []string {
 		var letter = dni[8:9]
 
 		if isNumber(dni[0:1]) {
-			user = letter + dni[:8]
+			user = letter + dni[1:8]
 		} else {
-			user = dni[:1] + letter + dni[1:8]
+			user = dni[:1] + letter + dni[2:8]
 		}
 		allUsers = append(allUsers, user)
 	}
@@ -120,11 +120,11 @@ func convertAllUsersToPasswords() []string {
 	for _,user := range allUsers {
 		if isNumber(user[1:2]) {
 			letter =strings.ToLower(user[0:1])
-			password = user[:8] + letter
 		}else {
 			letter =strings.ToLower(user[1:2])
-			password = user[:8] + letter
 		}
+
+		password = user[:7] + letter
 
 		allPasswords = append(allPasswords, password)
 	}
