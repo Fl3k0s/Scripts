@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
@@ -10,20 +11,32 @@ import (
 	"time"
 )
 
-var allDnis = []string{"Y8023501B", "X4431477K", "04216889T"}
+var allDnis []string
 var allUsers []string
 var allPasswords []string
-var allNames = []string{"Wilmer Salcedo Muñoz", "Jhonatan Veneros Collantes", "Javier Sanchez CARROZADO"}
+var allNames []string
 
 var toDate = exportToDate()
 
 var m int
+
 func main() {
+	fmt.Println("pon los dnis separdos por salto de linea, para finalizar pulsa tab y enter")
+	dnis, _ := bufio.NewReader(os.Stdin).ReadString('\t')
+	substring := dnis[:len(dnis)-2]
+	allDnis = strings.Split(substring, "\n")
+
+	//make trim to all dnis
+	for i, dni := range allDnis {
+		allDnis[i] = strings.TrimSpace(dni)
+	}
+
 	// comprobar que los dni son correctos
 	_continue := comprobeAllDnis()
 
 	// convertir los dni en usuarios
 	if _continue {
+
 		fmt.Println("allDnis: ", allDnis)
 		m = len(allDnis)
 		allUsers = convertAllDnisToUsers()
@@ -32,6 +45,16 @@ func main() {
 		// convertir las contraseñas si no existen
 		allPasswords = convertAllUsersToPasswords()
 		fmt.Println("allPasswords: ", allPasswords)
+
+		fmt.Println("pon los nombres separdos por comas (,)")
+		names, _ := bufio.NewReader(os.Stdin).ReadString('\t')
+
+		allNames = strings.Split(names, "\n")
+
+		//make trim to all users
+		for i, name := range allNames {
+			allNames[i] = strings.TrimSpace(name)
+		}
 
 		// creacion de las queries
 		json := generateJson()
@@ -51,14 +74,13 @@ func main() {
 		// end
 	}
 
-
 	// futuramente hacer un menú
 }
 
-func comprobeAllDnis() bool{
+func comprobeAllDnis() bool {
 	_continue := true
 
-	for _,dni := range allDnis {
+	for _, dni := range allDnis {
 		var letter = dni[8:9]
 		if !isNumber(dni[:1]) {
 			fmt.Println(dni)
@@ -89,7 +111,7 @@ func calculateTheLetterOfDni(dni string) string {
 
 func convertAllDnisToUsers() []string {
 	var allUsers = []string{}
-		for _,dni := range allDnis {
+	for _, dni := range allDnis {
 		var user string
 		var letter = dni[8:9]
 
@@ -117,11 +139,11 @@ func convertAllUsersToPasswords() []string {
 	var allPasswords = []string{}
 	var letter string
 	var password string
-	for _,user := range allUsers {
+	for _, user := range allUsers {
 		if isNumber(user[1:2]) {
-			letter =strings.ToLower(user[0:1])
-		}else {
-			letter =strings.ToLower(user[1:2])
+			letter = strings.ToLower(user[0:1])
+		} else {
+			letter = strings.ToLower(user[1:2])
 		}
 
 		password = user[:7] + letter
@@ -241,10 +263,10 @@ func generateJson() string {
 
 func transformAllNames() string {
 	var allNamesT string
-	for _,name := range allNames {
+	for _, name := range allNames {
 		var nameF = strings.ToLower(name)
 		//remplazar espacios por guiones
-		nameF = strings.ReplaceAll(nameF, " ","-")
+		nameF = strings.ReplaceAll(nameF, " ", "-")
 		allNamesT = allNamesT + nameF + "\n"
 	}
 	return allNamesT
