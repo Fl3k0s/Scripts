@@ -23,27 +23,19 @@ var m int
 func main() {
 	dnisFromFile := readFile("./filesToRead/dnis.txt")
 
-	fmt.Println("pon los dnis separdos por salto de linea, para finalizar pulsa tab y enter")
-
-
-	//dnis, _ := bufio.NewReader(os.Stdin).ReadString('\t')
 	substring := dnisFromFile[:len(dnisFromFile)-1]
 	allDnis = strings.Split(substring, "\n")
 
 	//make trim to all dnis
-	fmt.Println("tri de los dnis")
 	for i, dni := range allDnis {
 		allDnis[i] = strings.TrimSpace(dni)
-		fmt.Println(dni)
 	}
-	fmt.Println(allDnis)
 
 	// comprobar que los dni son correctos
 	_continue := comprobeAllDnis()
 
 	// convertir los dni en usuarios
 	if _continue {
-
 		fmt.Println("allDnis: ", allDnis)
 		m = len(allDnis)
 		allUsers = convertAllDnisToUsers()
@@ -67,17 +59,19 @@ func main() {
 		json := generateJson()
 		sql := generateSql()
 		allNames := transformAllNames()
-
+		passwords := strings.Join(allPasswords, ",")
 		getDate()
 
 		// creacion de los files
 		sqlFileName := "./files/inesertQuery-" + toDate + ".sql"
 		jsonFileName := "./files/usersCouchbase-" + toDate + ".json"
 		namesFileName := "./files/names-" + toDate + ".txt"
+		passwordsFileName := "./files/passwords-" + toDate + ".txt"
 
 		generateFile(json, jsonFileName)
 		generateFile(sql, sqlFileName)
 		generateFile(allNames, namesFileName)
+		generateFile(passwords, passwordsFileName)
 		// end
 	}
 
