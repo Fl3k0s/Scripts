@@ -10,8 +10,8 @@ import (
 )
 
 //user and password for the database
-var users = [...]string{"A", "B", "C"}
-var passwords = [...]string{"A", "B", "C"}
+var users = [...]string{"EXAMPLE1", "EXAMPLE2"}
+var passwords = [...]string{"A", "B"}
 var x int
 var date = exportDate()
 
