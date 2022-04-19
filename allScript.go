@@ -21,15 +21,22 @@ var toDate = exportToDate()
 var m int
 
 func main() {
+	dnisFromFile := readFile("./filesToRead/dnis.txt")
+
 	fmt.Println("pon los dnis separdos por salto de linea, para finalizar pulsa tab y enter")
-	dnis, _ := bufio.NewReader(os.Stdin).ReadString('\t')
-	substring := dnis[:len(dnis)-2]
+
+
+	//dnis, _ := bufio.NewReader(os.Stdin).ReadString('\t')
+	substring := dnisFromFile[:len(dnisFromFile)-1]
 	allDnis = strings.Split(substring, "\n")
 
 	//make trim to all dnis
+	fmt.Println("tri de los dnis")
 	for i, dni := range allDnis {
 		allDnis[i] = strings.TrimSpace(dni)
+		fmt.Println(dni)
 	}
+	fmt.Println(allDnis)
 
 	// comprobar que los dni son correctos
 	_continue := comprobeAllDnis()
@@ -46,8 +53,8 @@ func main() {
 		allPasswords = convertAllUsersToPasswords()
 		fmt.Println("allPasswords: ", allPasswords)
 
-		fmt.Println("pon los nombres separdos por comas (,)")
-		names, _ := bufio.NewReader(os.Stdin).ReadString('\t')
+		//fmt.Println("pon los nombres separdos por comas (,)")
+		names := readFile("./filesToRead/names.txt")
 
 		allNames = strings.Split(names, "\n")
 
@@ -81,6 +88,7 @@ func comprobeAllDnis() bool {
 	_continue := true
 
 	for _, dni := range allDnis {
+		fmt.Println("Coprobando dni:",dni)
 		var letter = dni[8:9]
 		if !isNumber(dni[:1]) {
 			fmt.Println(dni)
@@ -202,6 +210,29 @@ func generateFile(text string, fileName string) {
 		fmt.Println(err)
 		return
 	}
+}
+
+//read text from a file
+func readFile(fileName string) string {
+	file, err := os.Open(fileName)
+	if err != nil {
+		fmt.Println(err)
+		return ""
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	var text string
+	for scanner.Scan() {
+		text = text + scanner.Text() + "\n"
+	}
+
+	if err := scanner.Err(); err != nil {
+		fmt.Println(err)
+		return ""
+	}
+
+	return text
 }
 
 //this method generate sql query
