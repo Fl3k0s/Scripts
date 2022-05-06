@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"crypto/sha256"
+	"encoding/csv"
 	"encoding/hex"
 	"fmt"
 	"os"
@@ -66,10 +67,12 @@ func main() {
 		sqlFileName := "./files/inesertQuery-" + toDate + ".sql"
 		jsonFileName := "./files/usersCouchbase-" + toDate + ".json"
 		namesFileName := "./files/names-" + toDate + ".txt"
-
+		usersAndPasswordsFileName := "./files/usersAndPasswords-" + toDate + ".txt"
 		generateFile(json, jsonFileName)
 		generateFile(sql, sqlFileName)
 		generateFile(allNames, namesFileName)
+		generateFile(usersAndPasswords(), usersAndPasswordsFileName)
+		WriteCsv()
 		// end
 	}
 
@@ -305,4 +308,38 @@ func transformAllNames() string {
 		allNamesT = allNamesT + nameF + "\n"
 	}
 	return allNamesT
+}
+
+func usersAndPasswords() string {
+	var usersAndPasswords = "NAMES\t\t\t\t\t\tUSERS\t\t\t\tPASSWORDS\n"
+
+	for i := 0; i < m; i++ {
+		usersAndPasswords = usersAndPasswords + allNames[i] + "\t\t\t\t" + allUsers[i] + "\t\t\t" + allPasswords[i] + "\n"
+	}
+
+	return usersAndPasswords
+}
+
+func WriteCsv() {
+	// Crea un archivo
+	f, err := os.Create("test.csv")
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+	// Escribir BOM UTF-8
+	f.WriteString("\xEF\xBB\xBF")
+	// Crea una nueva secuencia de archivos de escritura
+	w := csv.NewWriter(f)
+	data := [][]string{
+		{"1", "Liu Bei", "23"},
+		{"2", "Zhang Fei", "23"},
+		{"3", "Guan Yu", "23"},
+		{"4", "Zhao Yun", "23"},
+		{"5", "Huang Zhong", "23"},
+		{"6", "Ma Chao", "23"},
+	}
+	//Entrada de datos
+	w.WriteAll(data)
+	w.Flush()
 }
