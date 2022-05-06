@@ -59,19 +59,17 @@ func main() {
 		json := generateJson()
 		sql := generateSql()
 		allNames := transformAllNames()
-		passwords := strings.Join(allPasswords, ",")
+		//passwords := strings.Join(allPasswords, ",")
 		getDate()
 
 		// creacion de los files
 		sqlFileName := "./files/inesertQuery-" + toDate + ".sql"
 		jsonFileName := "./files/usersCouchbase-" + toDate + ".json"
 		namesFileName := "./files/names-" + toDate + ".txt"
-		passwordsFileName := "./files/passwords-" + toDate + ".txt"
 
 		generateFile(json, jsonFileName)
 		generateFile(sql, sqlFileName)
 		generateFile(allNames, namesFileName)
-		generateFile(passwords, passwordsFileName)
 		// end
 	}
 
@@ -82,7 +80,7 @@ func comprobeAllDnis() bool {
 	_continue := true
 
 	for _, dni := range allDnis {
-		fmt.Println("Coprobando dni:",dni)
+		fmt.Println("Coprobando dni:", dni)
 		var letter = dni[8:9]
 		if !isNumber(dni[:1]) {
 			fmt.Println(dni)
@@ -268,12 +266,24 @@ func formatUserAndPassword(user, password string) (userF string, passF string) {
 func generateJson() string {
 	json := "[\n"
 
+	collection := "\"authentication\""
 	for i := 0; i < m; i++ {
+		name := strings.Split(allNames[i], " ")
+		firstname := "\"" + name[0] + "\""
+		lastname := "\""
+
+		for j := 1; j < len(name); j++ {
+			lastname = lastname + name[j] + " "
+		}
+
+		lastname = strings.TrimSpace(lastname)
+		lastname = lastname + "\""
+
 		ps := encodePassword(allPasswords[i])
 
 		user, pass := formatUserAndPassword(allUsers[i], ps)
 
-		value := "\t{\n\t\t\"username\"" + " : " + user + " ,\n\t\t\"password\" : " + pass + "\n\t}"
+		value := "\t{\n\t\t\"username\" : " + user + " ,\n\t\t\"password\" : " + pass + " ,\n\t\t\"firstname\" : " + firstname + " ,\n\t\t\"lastname\" : " + lastname + " ,\n\t\t\"collection\" : " + collection + "\n\t}"
 
 		if i != m-1 {
 			value = value + ",\n"
