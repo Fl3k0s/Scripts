@@ -16,6 +16,8 @@ var allDnis []string
 var allUsers []string
 var allPasswords []string
 var allNames []string
+var allPhones []string
+var shopCode string
 
 var toDate = exportToDate()
 
@@ -49,7 +51,11 @@ func main() {
 		//fmt.Println("pon los nombres separdos por comas (,)")
 		names := readFile("./filesToRead/names.txt")
 
+		phonesNumber := readFile("./filesToRead/phoneNumbers.txt")
 		allNames = strings.Split(names, "\n")
+		allPhones = strings.Split(phonesNumber, "\n")
+
+		shopCode = strings.Split(readFile("./filesToRead/shopCode.txt"), "\n")[0]
 
 		//make trim to all users
 		for i, name := range allNames {
@@ -60,19 +66,27 @@ func main() {
 		json := generateJson()
 		sql := generateSql()
 		allNames := transformAllNames()
+		driversInsert := generateSqlLiteInsertDriversTable()
+		relationsInsert := generateSqlLiteInsertRelationTable()
+		sqlLiteInserts := "BEGIN TRANSACTION;\n\n" +driversInsert + "\n\n" + relationsInsert + "\n\nCOMMIT;"
+
+
 		//passwords := strings.Join(allPasswords, ",")
 		getDate()
 
 		// creacion de los files
-		sqlFileName := "./files/inesertQuery-" + toDate + ".sql"
+		sqlFileName := "./files/insertQuery-" + toDate + ".sql"
 		jsonFileName := "./files/usersCouchbase-" + toDate + ".json"
 		namesFileName := "./files/names-" + toDate + ".txt"
 		usersAndPasswordsFileName := "./files/usersAndPasswords-" + toDate + ".txt"
+		insertSqlFileName := "./files/insertSQLIteQuery-" + toDate + ".sql"
+
 		generateFile(json, jsonFileName)
 		generateFile(sql, sqlFileName)
 		generateFile(allNames, namesFileName)
 		generateFile(usersAndPasswords(), usersAndPasswordsFileName)
-		WriteCsv()
+		generateFile(sqlLiteInserts, insertSqlFileName)
+		//WriteCsv()
 		// end
 	}
 
@@ -237,6 +251,42 @@ func generateSql() string {
 
 	for i := 0; i < m; i++ {
 		value := "('" + allUsers[i] + "', 0.0, 0.0)"
+
+		if i != m-1 {
+			value = value + ",\n"
+		}
+
+		query = query + value
+	}
+
+	query = query + ";"
+
+	return query
+}
+
+func generateSqlLiteInsertDriversTable() string {
+	query := "INSERT INTO drivers (DNI, UserName, Name, PhoneNumber) \nVALUES "
+
+	for i := 0; i < m; i++ {
+		value := "('" + allDnis[i] + "', "+ "'" + allUsers[i] + "', '" + allNames[i] + "', '" + allPhones[i] + "')"
+
+		if i != m-1 {
+			value = value + ",\n"
+		}
+
+		query = query + value
+	}
+
+	query = query + ";"
+
+	return query
+}
+
+func generateSqlLiteInsertRelationTable() string {
+	query := "INSERT INTO DriversShop (DNI, ShopCode) \nVALUES "
+
+	for i := 0; i < m; i++ {
+		value := "('" + allDnis[i] + "', '" + shopCode + "')"
 
 		if i != m-1 {
 			value = value + ",\n"
