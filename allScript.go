@@ -68,8 +68,7 @@ func main() {
 		allNames := transformAllNames()
 		driversInsert := generateSqlLiteInsertDriversTable()
 		relationsInsert := generateSqlLiteInsertRelationTable()
-		sqlLiteInserts := "BEGIN TRANSACTION;\n\n" +driversInsert + "\n\n" + relationsInsert + "\n\nCOMMIT;"
-
+		sqlLiteInserts := driversInsert + "\n\n" + relationsInsert
 
 		//passwords := strings.Join(allPasswords, ",")
 		getDate()
@@ -137,6 +136,7 @@ func convertAllDnisToUsers() []string {
 		} else {
 			user = dni[:1] + letter + dni[2:8]
 		}
+		user = strings.ToUpper(user)
 		allUsers = append(allUsers, user)
 	}
 
@@ -268,7 +268,7 @@ func generateSqlLiteInsertDriversTable() string {
 	query := "INSERT INTO drivers (DNI, UserName, Name, PhoneNumber) \nVALUES "
 
 	for i := 0; i < m; i++ {
-		value := "('" + allDnis[i] + "', "+ "'" + allUsers[i] + "', '" + allNames[i] + "', '" + allPhones[i] + "')"
+		value := "('" + allDnis[i] + "', " + "'" + allUsers[i] + "', '" + allNames[i] + "', '" + allPhones[i] + "')"
 
 		if i != m-1 {
 			value = value + ",\n"
@@ -361,10 +361,19 @@ func transformAllNames() string {
 }
 
 func usersAndPasswords() string {
-	var usersAndPasswords = "NAMES\t\t\t\t\t\tUSERS\t\t\t\tPASSWORDS\n"
-
+	var usersAndPasswords = "NAME\n"
 	for i := 0; i < m; i++ {
-		usersAndPasswords = usersAndPasswords + allNames[i] + "\t\t\t\t" + allUsers[i] + "\t\t\t" + allPasswords[i] + "\n"
+		usersAndPasswords = usersAndPasswords + allNames[i] + "\n"
+	}
+
+	usersAndPasswords = usersAndPasswords + "\nUSERS\n"
+	for i := 0; i < m; i++ {
+		usersAndPasswords = usersAndPasswords + allUsers[i] + "\n"
+	}
+
+	usersAndPasswords = usersAndPasswords + "\nPASSWORDS\n"
+	for i := 0; i < m; i++ {
+		usersAndPasswords = usersAndPasswords + allPasswords[i] + "\n"
 	}
 
 	return usersAndPasswords
