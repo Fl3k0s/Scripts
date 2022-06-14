@@ -320,6 +320,7 @@ func generateJson() string {
 	json := "[\n"
 
 	collection := "\"authentication\""
+	userType := "\"userType\": \"ECOMMERCE_USER\""
 	for i := 0; i < m; i++ {
 		name := strings.Split(allNames[i], " ")
 		firstname := "\"" + name[0] + "\""
@@ -336,7 +337,7 @@ func generateJson() string {
 
 		user, pass := formatUserAndPassword(allUsers[i], ps)
 
-		value := "\t{\n\t\t\"username\" : " + user + " ,\n\t\t\"password\" : " + pass + " ,\n\t\t\"firstname\" : " + firstname + " ,\n\t\t\"lastname\" : " + lastname + " ,\n\t\t\"collection\" : " + collection + "\n\t}"
+		value := "\t{\n\t\t\"username\" : " + user + " ,\n\t\t\"password\" : " + pass + " ,\n\t\t\"firstname\" : " + firstname + " ,\n\t\t\"lastname\" : " + lastname + " ,\n\t\t\"collection\" : " + collection + ",\n\t\t" + userType + "\n\t}"
 
 		if i != m-1 {
 			value = value + ",\n"

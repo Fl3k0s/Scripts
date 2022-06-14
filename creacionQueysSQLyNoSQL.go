@@ -18,7 +18,7 @@ var date = exportDate()
 //this is a query for couchbase
 var query = "INSERT INTO ecom-pro.auth.authentication (KEY, VALUE) VALUES "
 
-func main() {
+func CreationQuerySqlAndNotSql() {
 	x = len(users)
 
 	//queryF := generateQuerysCouchbase(query)
